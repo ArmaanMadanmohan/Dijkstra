@@ -1,15 +1,39 @@
 
-// use std::cmp::Ord;
+use std::cmp::Ordering;
 
-#[derive(Debug)]
-pub struct MinHeap<T: Ord> {
-    heap: Vec<T>,
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub struct Vertex<'a>{
+    pub name: &'a str, 
+    pub distance: usize,
 }
 
-impl<T:Ord + Clone> MinHeap<T> {
+impl<'a> Vertex<'a> {
+    fn cmp_key(&self) -> (usize, &str) {
+        (self.distance, &self.name)
+    }
+}
+
+impl<'a> Ord for Vertex<'a> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.cmp_key().cmp(&other.cmp_key())
+    }
+}
+
+impl<'a> PartialOrd for Vertex<'a> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+#[derive(Debug)]
+pub struct MinHeap<'a> {
+    heap: Vec<Vertex<'a>>,
+}
+
+impl<'a> MinHeap<'a> {
 
     //Initialises a minimum heap
-    fn init() -> MinHeap<T> {
+    pub fn init() -> MinHeap<'a> {
         MinHeap {
             // heap: Vec::<T>::new(),
             heap: Vec::new(),
@@ -17,8 +41,8 @@ impl<T:Ord + Clone> MinHeap<T> {
     }
 
     //Inserts a value into the heap and maintans heap property
-    fn insert(&mut self, value: T) {
-        self.heap.push(value);
+    pub fn insert(&mut self, vertex: Vertex<'a>) {
+        self.heap.push(vertex);
         self.heapify_up();
     }
 
@@ -30,8 +54,7 @@ impl<T:Ord + Clone> MinHeap<T> {
             if self.heap[i] < self.heap[parent] {
                 self.heap.swap(i, parent);
                 i = parent;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -44,28 +67,27 @@ impl<T:Ord + Clone> MinHeap<T> {
             let left_child = 2 * i + 1;
             let right_child = 2 * i + 2;
             let mut smallest = i;
+
             if left_child < self.heap.len() && self.heap[left_child] < self.heap[smallest] {
                 smallest = left_child;
             }
             if right_child < self.heap.len() && self.heap[right_child] < self.heap[smallest] {
                 smallest = right_child;
             }
+
             if smallest != i {
                 self.heap.swap(i, smallest);
                 i = smallest;
-            }
-            else {
+            } else {
                 break;
             }
         }
     }
 
-    fn remove_min(&mut self) -> Option<T> {
-        println!("{:?}",self.heap.len());
+    pub fn remove_min(&mut self) -> Option<Vertex<'a>> {
         if self.heap.len() == 0 {
             None
-        }
-        else {
+        } else {
             let last_idx = self.heap.len() - 1;
             self.heap.swap(0, last_idx);
             let min = self.heap.pop()?;
@@ -76,17 +98,4 @@ impl<T:Ord + Clone> MinHeap<T> {
         }  
     } 
 
-}
-
-fn main() {
-    let mut heap = MinHeap::init();
-    heap.insert(3);
-    heap.insert(1);
-    heap.insert(4);
-    heap.insert(5);
-
-    println!("{:?}", heap.remove_min());
-    println!("{:?}", heap.remove_min());
-    println!("{:?}", heap.remove_min());
-    println!("{:?}", heap.remove_min());
 }
