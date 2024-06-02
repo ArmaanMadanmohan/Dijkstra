@@ -1,85 +1,25 @@
 pub mod minheap;
-use crate::{
-    minheap::MinHeap,
-    minheap::Vertex,
-};
-use std::collections::HashMap;
+pub mod grid;
+pub mod dijkstra;
 
-
-fn shortest_path<'a>(
-    start: Vertex<'a>,
-    matrix: &Vec<Vec<Option<usize>>>,
-    vertices: &'a Vec<Vertex<'a>>,
-) -> HashMap<&'a str, Option<usize>> {
-    let mut unvisited = MinHeap::init();
-    let mut visited = vec![false; vertices.len()];
-    let mut distances: HashMap<&'a str, Option<usize>> = HashMap::new();
-
-    for vertex in vertices {
-        distances.insert(vertex.name, None);
-    }
-    distances.insert(start.name, Some(0));
-    unvisited.insert(Vertex {
-        name: start.name,
-        distance: 0,
-    });
-
-    while let Some(Vertex { name, distance }) = unvisited.remove_min() {
-        let index = match vertices.iter().position(|v| v.name == name) {
-            Some(index) => index,
-            None => continue,
-        };
-
-        if visited[index] {
-            continue;
-        }
-
-        visited[index] = true;
-
-        for (neighbor_idx, &weight) in matrix[index].iter().enumerate() {
-            if weight.is_none() {
-                continue;
-            }
-
-            let weight = weight.unwrap();
-            if !visited[neighbor_idx] {
-                let new_distance = distance + weight;
-                let neighbor_name = vertices[neighbor_idx].name;
-                if distances[neighbor_name].is_none() || new_distance < distances[neighbor_name].unwrap() {
-                    distances.insert(neighbor_name, Some(new_distance));
-                    unvisited.insert(Vertex {
-                        name: neighbor_name,
-                        distance: new_distance,
-                    });
-                }
-            }
-        }
-    }
-
-    distances
-}
+use crate::grid::{Grid, CellType};
+use crate::dijkstra::run;
 
 fn main() {
-    let vertices = vec![
-        Vertex { name: "s", distance: 0 },
-        Vertex { name: "t", distance: 0 },
-        Vertex { name: "x", distance: 0 },
-        Vertex { name: "y", distance: 0 },
-    ];
+    let mut grid = Grid::new((5, 5));
 
-    let matrix = vec![
-        vec![None, Some(2), Some(3),None],
-        vec![Some(2), None, None, Some(2)],
-        vec![Some(3), None, None, Some(6)],
-        vec![None, Some(2), Some(6), None],
-    ];
-
-    let start = vertices[0];
-    let distances = shortest_path(start, &matrix, &vertices);
-
-    for (v, d) in &distances {
-        println!("name: {}, distance: {:?}", v, d);
+    for x in 0..grid.dimensions.0 {
+        for y in 0..grid.dimensions.1 {
+            let mut cell = grid.get_cell((x as usize, y as usize));
+            cell.set_cell_type(CellType::Cost);
+            cell.set_cell_cost(Some((x * 30) + (y * 20))); // Set cost based on coordinates for example
+            grid.set_cell((x as usize, y as usize), cell);
+        }
     }
-}
 
-//neighbour_idx or column? current idx or row?
+    let start_cell = grid.get_cell((0, 0));
+    let end_cell = grid.get_cell((4, 4));
+
+    let path = run(start_cell, &mut grid, end_cell);
+    println!("Path: {:?}", path);
+}

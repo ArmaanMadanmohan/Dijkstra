@@ -1,32 +1,6 @@
 
 use crate::grid::Cell;
 
-// #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-// pub struct Vertex<'a>{
-//     // pub id: usize,
-//     pub name: &'a str, 
-//     pub x: i32,
-//     pub y: i32,
-// }
-
-// impl<'a> Vertex<'a> {
-//     fn cmp_key(&self) -> (usize, &str) {
-//         (self.distance, &self.name)
-//     }
-// }
-
-// impl<'a> Ord for Vertex<'a> {
-//     fn cmp(&self, other: &Self) -> Ordering {
-//         self.cmp_key().cmp(&other.cmp_key())
-//     }
-// }
-
-// impl<'a> PartialOrd for Vertex<'a> {
-//     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-//         Some(self.cmp(other))
-//     }
-// }
-
 #[derive(Debug)]
 pub struct MinHeap {
     heap: Vec<Cell>,

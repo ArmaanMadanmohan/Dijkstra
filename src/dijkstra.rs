@@ -1,11 +1,8 @@
-pub mod minheap;
-pub mod grid;
-
 use crate::minheap::MinHeap;
-use crate::grid::{Grid, Cell, CellType};
+use crate::grid::{Grid, Cell};
 
 
-fn run(start: Cell, grid: &mut Grid, end: Cell) -> Vec<Cell> {
+pub fn run(start: Cell, grid: &mut Grid, end: Cell) -> Vec<Cell> {
     let mut visited: Vec<Vec<bool>> = vec![vec![false; grid.dimensions.0 as usize]; grid.dimensions.1 as usize];
     let mut distance: Vec<Vec<Option<i32>>> = vec![vec![None; grid.dimensions.0 as usize]; grid.dimensions.1 as usize];
     let mut prev: Vec<Vec<Option<Cell>>> = vec![vec![None; grid.dimensions.0 as usize]; grid.dimensions.1 as usize];
