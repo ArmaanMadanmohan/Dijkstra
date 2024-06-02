@@ -125,10 +125,6 @@ impl Cell {
         self.coordinates
     }
 
-    // pub fn get_element(&self) -> CellElement {
-    //     self.element
-    // }
-
     pub fn set_coordinates(&mut self, (x, y): (usize, usize)) {
         self.coordinates = (x, y);
     }
@@ -153,33 +149,3 @@ impl Cell {
         self.element.cost
     }
 }
-
-// fn main() {
-//     let size: (i32, i32) = (5,5);
-//     let grid = Grid::new(size);
-//     // let mut cell = grid.get_cell((2, 3));
-//     // println!("cell: {:?}", cell);
-//     // cell.set_cell_type(CellType::Cost);
-//     // cell.set_cell_cost(Some(5));
-//     // println!("cell: {:?}", cell);
-//     println!("{}",grid.in_bounds((1, 2)));
-//     // println!("coords: {:?}", cell.coordinates);
-//     // println!("type: {:?}\n", cell.element.cell_type);
-
-//     // let neighbours = grid.adjacent(cell);
-//     // for i in neighbours {
-//     //     println!("adjacent cell coords {:?}", i.coordinates);
-//     //     println!("adjacent cell type {:?}\n", i.element.cell_type);
-//     // }
-// }
-
-// pub struct Dimensions {
-//     x: i32,
-//     y: i32,
-// }
-
-// impl Dimensions {
-//     pub fn new(length: i32, height: i32) -> Dimensions {
-//         Dimensions { length, height }
-//     }
-// }

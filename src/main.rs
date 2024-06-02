@@ -12,7 +12,7 @@ fn main() {
         for y in 0..grid.dimensions.1 {
             let mut cell = grid.get_cell((x as usize, y as usize));
             cell.set_cell_type(CellType::Cost);
-            cell.set_cell_cost(Some((x * 30) + (y * 20))); // Set cost based on coordinates for example
+            cell.set_cell_cost(Some((x * 30) + (y * 20))); 
             grid.set_cell((x as usize, y as usize), cell);
         }
     }
