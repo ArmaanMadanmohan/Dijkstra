@@ -1,48 +1,49 @@
 
-use std::cmp::Ordering;
+use crate::grid::Cell;
 
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub struct Vertex<'a>{
-    pub name: &'a str, 
-    pub distance: usize,
-}
+// #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+// pub struct Vertex<'a>{
+//     // pub id: usize,
+//     pub name: &'a str, 
+//     pub x: i32,
+//     pub y: i32,
+// }
 
-impl<'a> Vertex<'a> {
-    fn cmp_key(&self) -> (usize, &str) {
-        (self.distance, &self.name)
-    }
-}
+// impl<'a> Vertex<'a> {
+//     fn cmp_key(&self) -> (usize, &str) {
+//         (self.distance, &self.name)
+//     }
+// }
 
-impl<'a> Ord for Vertex<'a> {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.cmp_key().cmp(&other.cmp_key())
-    }
-}
+// impl<'a> Ord for Vertex<'a> {
+//     fn cmp(&self, other: &Self) -> Ordering {
+//         self.cmp_key().cmp(&other.cmp_key())
+//     }
+// }
 
-impl<'a> PartialOrd for Vertex<'a> {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
+// impl<'a> PartialOrd for Vertex<'a> {
+//     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+//         Some(self.cmp(other))
+//     }
+// }
 
 #[derive(Debug)]
-pub struct MinHeap<'a> {
-    heap: Vec<Vertex<'a>>,
+pub struct MinHeap {
+    heap: Vec<Cell>,
 }
 
-impl<'a> MinHeap<'a> {
+impl MinHeap {
 
     //Initialises a minimum heap
-    pub fn init() -> MinHeap<'a> {
+    pub fn init() -> MinHeap {
         MinHeap {
-            // heap: Vec::<T>::new(),
             heap: Vec::new(),
         }
     }
 
     //Inserts a value into the heap and maintans heap property
-    pub fn insert(&mut self, vertex: Vertex<'a>) {
-        self.heap.push(vertex);
+    pub fn insert(&mut self, cell: Cell) {
+        self.heap.push(cell);
         self.heapify_up();
     }
 
@@ -84,7 +85,7 @@ impl<'a> MinHeap<'a> {
         }
     }
 
-    pub fn remove_min(&mut self) -> Option<Vertex<'a>> {
+    pub fn remove_min(&mut self) -> Option<Cell> {
         if self.heap.len() == 0 {
             None
         } else {
@@ -98,4 +99,7 @@ impl<'a> MinHeap<'a> {
         }  
     } 
 
+    pub fn is_empty(&self) -> bool {
+        self.heap.is_empty()
+    }
 }

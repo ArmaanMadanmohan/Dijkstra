@@ -1,7 +1,6 @@
-// pub mod minheap;
-// use crate::minheap::Vertex; // find a way to not repeat these among main etc..
+use std::cmp::Ordering;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum CellType { //vertex struct?
     Start,
     End,
@@ -15,17 +14,28 @@ pub struct Grid {
     pub data: Vec<Vec<Cell>>, 
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct Cell { 
-    // vertex: Vertex,
     coordinates: (usize, usize), 
     element: CellElement,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct CellElement {
     cell_type: CellType,
     cost: Option<i32>,
+}
+
+impl Ord for Cell {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.element.cost.cmp(&other.element.cost)
+    }
+}
+
+impl PartialOrd for Cell {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
 }
 
 //compare cells function? implement if required. instead of cloning might just create duplicate
@@ -53,7 +63,7 @@ impl Grid {
     /**
      * Returns an array of adjacent/neighbouring cells to the given cell.
      */
-    pub fn adjacent(&self, cell: Cell) -> Vec<Cell> {
+    pub fn adjacent(&mut self, cell: Cell) -> Vec<Cell> {
         let mut neighbours: Vec<Cell> = Vec::new();
 
         if cell.coordinates.0 > 0 { 
@@ -79,6 +89,11 @@ impl Grid {
         self.data[coords.0][coords.1].clone()
     }
 
+    pub fn set_cell(&mut self, coords: (usize, usize), cell: Cell) {
+        // let (x, y) = coordinates;
+        self.data[coords.0][coords.1] = cell;
+    }
+
     /**
      * Returns a flattened array of all cells in a grid
      */
@@ -91,46 +106,72 @@ impl Grid {
         }
         returned_cells
     }
+
+    pub fn in_bounds(&self, dimensions: (i32, i32)) -> bool {
+        if dimensions.0 >= 0 && dimensions.1 >= 0 && dimensions.0 < self.dimensions.0 && dimensions.1 < self.dimensions.1 {
+            true
+        } else {
+            false
+        }
+    }
 }
 
 impl Cell {
-    /**
-     * Adjusts cell type
-     */
+    pub fn new(coordinates: (usize, usize), element: CellElement) -> Self {
+        Cell { coordinates, element }
+    }
+
+    pub fn get_coordinates(&self) -> (usize, usize) {
+        self.coordinates
+    }
+
+    // pub fn get_element(&self) -> CellElement {
+    //     self.element
+    // }
+
+    pub fn set_coordinates(&mut self, (x, y): (usize, usize)) {
+        self.coordinates = (x, y);
+    }
+
     pub fn set_cell_type(&mut self, cell_type: CellType) {
         self.element.cell_type = cell_type;
     }
 
-    /**
-     * Adjusts cell cost (to None or a provided number)
-     */
-    pub fn set_cell_cost(&mut self, cost: Option<i32>) { //change to Result, use Ok(()) and Err() for error handling?
+    pub fn set_cell_cost(&mut self, cost: Option<i32>) {
         if let CellType::Cost = self.element.cell_type {
-                self.element.cost = cost;
-        }
-        else {
+            self.element.cost = cost;
+        } else {
             println!("Cannot set cost on a cell that is not of type Cost")
-        }     
+        }
+    }
+
+    pub fn get_cell_type(&self) -> CellType {
+        self.element.cell_type
+    }
+
+    pub fn get_cost(&self) -> Option<i32> {
+        self.element.cost
     }
 }
 
-fn main() {
-    let size: (i32, i32) = (5,5);
-    let grid = Grid::new(size);
-    let mut cell = grid.get_cell((2, 3));
-    println!("cell: {:?}", cell);
-    // cell.set_cell_type(CellType::Cost);
-    cell.set_cell_cost(Some(5));
-    println!("cell: {:?}", cell);
-    // println!("coords: {:?}", cell.coordinates);
-    // println!("type: {:?}\n", cell.element.cell_type);
+// fn main() {
+//     let size: (i32, i32) = (5,5);
+//     let grid = Grid::new(size);
+//     // let mut cell = grid.get_cell((2, 3));
+//     // println!("cell: {:?}", cell);
+//     // cell.set_cell_type(CellType::Cost);
+//     // cell.set_cell_cost(Some(5));
+//     // println!("cell: {:?}", cell);
+//     println!("{}",grid.in_bounds((1, 2)));
+//     // println!("coords: {:?}", cell.coordinates);
+//     // println!("type: {:?}\n", cell.element.cell_type);
 
-    // let neighbours = grid.adjacent(cell);
-    // for i in neighbours {
-    //     println!("adjacent cell coords {:?}", i.coordinates);
-    //     println!("adjacent cell type {:?}\n", i.element.cell_type);
-    // }
-}
+//     // let neighbours = grid.adjacent(cell);
+//     // for i in neighbours {
+//     //     println!("adjacent cell coords {:?}", i.coordinates);
+//     //     println!("adjacent cell type {:?}\n", i.element.cell_type);
+//     // }
+// }
 
 // pub struct Dimensions {
 //     x: i32,
